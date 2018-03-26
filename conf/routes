@@ -7,3 +7,5 @@ GET     /assets/*file               controllers.Assets.versioned(file)
 
 # Task api
 GET     /           controllers.TaskController.index
++ nocsrf
+POST    /task       controllers.TaskController.createTask

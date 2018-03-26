@@ -33,6 +33,19 @@ extends AbstractController (cc) {
     }
   }
 
+  def createTask = Action.async {implicit request =>
+    taskForm.bindFromRequest.fold(
+      errorForm => {
+        Future.successful(Ok("Invalid inut!!"))
+      },
+      task => {
+        repo.create(task.name, task.detail, task.done).map {_ =>
+          Redirect(routes.TaskController.index).flashing("success" -> "user.created")
+        }
+      }
+    )
+  }
+
 }
 
 case class CreateTaskForm(name: String, detail: String, done: Boolean)

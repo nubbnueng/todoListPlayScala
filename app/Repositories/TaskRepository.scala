@@ -31,4 +31,11 @@ class TaskRepository @Inject() (dbConfigProvider: DatabaseConfigProvider)(implic
   def list(): Future[Seq[Task]] = db.run {
     task.result
   }
+
+  def create(name: String, detail: String, done: Boolean): Future[Task] = db.run {
+    (task.map(t => (t.name, t.detail, t.done))
+      returning task.map(_.id)
+      into ((content, id) => Task(id, content._1, content._2, content._3))
+      ) += (name, detail, done)
+  }
 }
