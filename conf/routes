@@ -11,3 +11,4 @@ GET     /tasks          controllers.TaskController.index
 POST    /task           controllers.TaskController.createTask
 + nocsrf
 PUT     /task/:id       controllers.TaskController.updateTask(id: Long)
+GET     /task/:id       controllers.TaskController.find(id:Long)

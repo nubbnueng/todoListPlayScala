@@ -9,10 +9,10 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaskController @Inject() (repo: TaskRepository,
-                                cc: ControllerComponents,
-                               )(implicit ec: ExecutionContext)
-extends AbstractController (cc) {
+class TaskController @Inject()(repo: TaskRepository,
+                               cc: ControllerComponents,
+                              )(implicit ec: ExecutionContext)
+  extends AbstractController(cc) {
 
   val createTaskForm: Form[CreateTaskForm] = Form {
     mapping(
@@ -30,20 +30,20 @@ extends AbstractController (cc) {
     )(UpdateTaskForm.apply)(UpdateTaskForm.unapply)
   }
 
-  def index = Action.async {implicit request =>
+  def index = Action.async { implicit request =>
     repo.list().map { people =>
       Ok(Json.toJson(people))
     }
   }
 
-  def createTask = Action.async {implicit request =>
+  def createTask = Action.async { implicit request =>
     createTaskForm.bindFromRequest.fold(
       errorForm => {
         Future.successful(BadRequest("Invalid input!!"))
       },
       task => {
         repo.create(task.name, task.detail, task.done)
-         // .map {_ =>  Redirect(routes.TaskController.index).flashing("success" -> "user.created")
+          // .map {_ =>  Redirect(routes.TaskController.index).flashing("success" -> "user.created")
           .map { t => Ok(Json.toJson(t))
         }
       }
@@ -56,10 +56,18 @@ extends AbstractController (cc) {
         Future.successful(BadRequest("Invalid input!!"))
       },
       task => {
-        repo.update(id, task.name, task.detail, task.done).map{ t => Ok(Json.toJson(t))}
+        repo.update(id, task.name, task.detail, task.done).map { t => Ok(Json.toJson(t)) }
       })
+  }
+
+  def find(id: Long) = Action.async { implicit request =>
+    repo.find(id).map { t =>
+      if(t.isEmpty) NotFound("Not found task with id: " + id)
+      else Ok(Json.toJson(t))
+    }
   }
 }
 
 case class CreateTaskForm(name: String, detail: String, done: Boolean)
+
 case class UpdateTaskForm(name: Option[String], detail: Option[String], done: Option[Boolean])
