@@ -9,3 +9,5 @@ GET     /assets/*file               controllers.Assets.versioned(file)
 GET     /           controllers.TaskController.index
 + nocsrf
 POST    /task       controllers.TaskController.createTask
++ nocsrf
+PUT     /task/:id   controllers.TaskController.updateTask(id: Long)

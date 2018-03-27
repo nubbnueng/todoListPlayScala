@@ -1,9 +1,8 @@
 package controllers
 
 import Repositories.TaskRepository
-
+import akka.actor.Status.Success
 import javax.inject._
-
 import models._
 import play.api.data.Form
 import play.api.data.Forms._
@@ -13,6 +12,7 @@ import play.api.libs.json.Json
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class TaskController @Inject() (repo: TaskRepository,
                                 cc: ControllerComponents,
@@ -36,16 +36,26 @@ extends AbstractController (cc) {
   def createTask = Action.async {implicit request =>
     taskForm.bindFromRequest.fold(
       errorForm => {
-        Future.successful(Ok("Invalid inut!!"))
+        Future.successful(Ok("Invalid input!!"))
       },
       task => {
-        repo.create(task.name, task.detail, task.done).map {_ =>
-          Redirect(routes.TaskController.index).flashing("success" -> "user.created")
+        repo.create(task.name, task.detail, task.done)
+         // .map {_ =>  Redirect(routes.TaskController.index).flashing("success" -> "user.created")
+          .map { t => Ok(Json.toJson(t))
         }
       }
     )
   }
 
+  def updateTask(id: Long) = Action.async { implicit request =>
+    taskForm.bindFromRequest().fold(
+      error => {
+        Future.successful(Ok("Invalid input!!"))
+      },
+      task => {
+        repo.update(id, Option(task.name), Option(task.detail), Option(task.done)).map{ t => Ok(Json.toJson(t))}
+      })
+  }
 }
 
 case class CreateTaskForm(name: String, detail: String, done: Boolean)
