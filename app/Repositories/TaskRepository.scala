@@ -42,12 +42,24 @@ class TaskRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   }
 
   def update(id: Long, name: Option[String], detail: Option[String], done: Option[Boolean]) = {
-    val query = for (task <- taskTable if task.id === id)
-      yield (task.name, task.detail, task.done)
-    db.run(query.update(name.get, detail.get, done.get)) map {
-      _ > 0
+
+    if (!name.isEmpty) {
+      val query = for (task <- taskTable if task.id === id) yield task.name
+      db.run(query.update(name.get))
+    }
+    if (!detail.isEmpty) {
+      val query = for (task <- taskTable if task.id === id) yield task.detail
+      db.run(query.update(detail.get))
+    }
+    if (!done.isEmpty) {
+      val query = for (task <- taskTable if task.id === id) yield task.done
+      db.run(query.update(done.get))
     }
 
-    db.run((for (task <- taskTable if task.id === id) yield task).result.headOption)
+    find(id)
+  }
+
+  def find(id: Long) = db.run {
+    taskTable.filter(_.id === id).result.headOption
   }
 }

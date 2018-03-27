@@ -6,8 +6,8 @@
 GET     /assets/*file               controllers.Assets.versioned(file)
 
 # Task api
-GET     /           controllers.TaskController.index
+GET     /tasks          controllers.TaskController.index
 + nocsrf
-POST    /task       controllers.TaskController.createTask
+POST    /task           controllers.TaskController.createTask
 + nocsrf
-PUT     /task/:id   controllers.TaskController.updateTask(id: Long)
+PUT     /task/:id       controllers.TaskController.updateTask(id: Long)
