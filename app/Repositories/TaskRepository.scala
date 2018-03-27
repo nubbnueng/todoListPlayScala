@@ -59,6 +59,8 @@ class TaskRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
     find(id)
   }
 
+  def delete(id: Long) = db.run(taskTable.filter(_.id === id).delete) map { _ > 0}
+
   def find(id: Long) = db.run {
     taskTable.filter(_.id === id).result.headOption
   }

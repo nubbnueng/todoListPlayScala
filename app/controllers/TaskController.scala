@@ -60,6 +60,13 @@ class TaskController @Inject()(repo: TaskRepository,
       })
   }
 
+  def deleteTask(id: Long) = Action.async { implicit request =>
+    repo.delete(id).map { success =>
+      if (success) Ok("Deleted task id: " + id + " successfully.")
+      else NotFound("Can not delete task id: " + id)
+    }
+  }
+
   def find(id: Long) = Action.async { implicit request =>
     repo.find(id).map { t =>
       if(t.isEmpty) NotFound("Not found task with id: " + id)

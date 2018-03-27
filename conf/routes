@@ -12,3 +12,5 @@ POST    /task           controllers.TaskController.createTask
 + nocsrf
 PUT     /task/:id       controllers.TaskController.updateTask(id: Long)
 GET     /task/:id       controllers.TaskController.find(id:Long)
++ nocsrf
+DELETE  /task/:id       controllers.TaskController.deleteTask(id:Long)
